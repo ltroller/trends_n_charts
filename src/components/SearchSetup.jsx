@@ -1,18 +1,7 @@
 import React, { Component } from "react";
-import {
-    Container,
-    Row,
-    Col,
-    Jumbotron,
-    Input,
-    FormGroup,
-    Button,
-    InputGroup,
-    InputGroupAddon,
-    Alert,
-    Badge
-} from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Container, Row, Col, Jumbotron, Button, Alert } from "reactstrap";
+import { SearchTermForm } from "./";
+
 import api from "../api.js";
 
 export class SearchSetup extends Component {
@@ -27,59 +16,35 @@ export class SearchSetup extends Component {
         };
 
         // Bind functions
-        this.handleAddTag = this.handleAddTag.bind(this);
+        this.handleAddTerm = this.handleAddTerm.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        // this.handleRemoveTag = this.handleRemoveTag.bind(this);
+        this.handleRemoveTerm = this.handleRemoveTerm.bind(this);
     }
 
     handleSubmit(e) {
         e.preventDefault();
     }
 
-    handleAddTag(e) {
-        e.preventDefault();
-        let input = e.target.parentElement.previousSibling;
-        let type = input.getAttribute("name");
+    handleAddTerm(type, value, error) {
         let newState = { ...this.state };
-        let cpName = type.charAt(0).toUpperCase() + type.slice(1);
-        if (input.value.length < 3) {
-            newState.error = `${cpName} should be at least 3 letters`;
-        } else if (this.state[type].includes(input.value)) {
-            newState.error = `${input.value} is already in ${type}`;
-        } else {
-            newState.error = null;
-            this.state[type].push(input.value);
-            input.value = null;
+        newState.error = error;
+        if (value) {
+            newState[type].push(value);
         }
-        console.log(this.state, newState);
 
         this.setState(newState);
     }
 
-    handleRemoveTag(e, value, type) {
+    handleRemoveTerm(e, value, type) {
         let ln = e.currentTarget;
         let badge = ln.parentElement;
         // remove event listener ?
         // ln.removeEventListener("click", this.handleRemoveTag);
-        badge.classList.add("removed");
-        api.delay(300).then(() => {
-            this.setState({
-                [type]: this.state[type].filter(val => val !== value)
-            });
+        // badge.classList.add("removed");
+        this.setState({
+            [type]: this.state[type].filter(val => val !== value)
         });
-    }
-
-    renderSearchTerms(i, value, type) {
-        let color = type === "keywords" ? "info" : "warning";
-        return (
-            <Badge key={i} color={color}>
-                {value}
-                <FontAwesomeIcon
-                    onClick={e => this.handleRemoveTag(e, value, type)}
-                    icon="times-circle"
-                />
-            </Badge>
-        );
+        // api.delay(400).then(() => {});
     }
 
     render() {
@@ -108,64 +73,23 @@ export class SearchSetup extends Component {
 
                             <Row>
                                 <Col md={6}>
-                                    <h4>Keywords</h4>
-                                    <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                                        <InputGroup>
-                                            <Input
-                                                type="text"
-                                                name="keywords"
-                                                placeholder="Add a keyword"
-                                            />
-                                            <InputGroupAddon addonType="append">
-                                                <Button
-                                                    onClick={this.handleAddTag}
-                                                    color="info"
-                                                >
-                                                    +
-                                                </Button>
-                                            </InputGroupAddon>
-                                        </InputGroup>
-                                    </FormGroup>
-                                    <div className="search-term-list">
-                                        {this.state.keywords.map((keyword, i) =>
-                                            this.renderSearchTerms(
-                                                i,
-                                                keyword,
-                                                "keywords"
-                                            )
-                                        )}
-                                    </div>
+                                    <SearchTermForm
+                                        name="keyword"
+                                        type={"keywords"}
+                                        terms={this.state.keywords}
+                                        addTerm={this.handleAddTerm}
+                                        removeTerm={this.handleRemoveTerm}
+                                    />
                                 </Col>
                                 <Col md={6}>
-                                    <h4>Locations</h4>
-
-                                    <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
-                                        <InputGroup>
-                                            <Input
-                                                type="text"
-                                                name="locations"
-                                                placeholder="Add a location"
-                                            />
-                                            <InputGroupAddon addonType="append">
-                                                <Button
-                                                    onClick={this.handleAddTag}
-                                                    color="warning"
-                                                >
-                                                    +
-                                                </Button>
-                                            </InputGroupAddon>
-                                        </InputGroup>
-                                    </FormGroup>
-                                    <div className="search-term-list">
-                                        {this.state.locations.map(
-                                            (location, i) =>
-                                                this.renderSearchTerms(
-                                                    i,
-                                                    location,
-                                                    "locations"
-                                                )
-                                        )}
-                                    </div>
+                                    <SearchTermForm
+                                        name="location"
+                                        type={"locations"}
+                                        terms={this.state.locations}
+                                        btColor="warning"
+                                        addTerm={this.handleAddTerm}
+                                        removeTerm={this.handleRemoveTerm}
+                                    />
                                 </Col>
                             </Row>
 
