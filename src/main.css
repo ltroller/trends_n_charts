@@ -1,0 +1,29 @@
+body {
+  font-family: "Roboto", sans-serif;
+  padding: 0;
+  margin: 0; }
+  body nav a.navbar-brand {
+    color: #fff !important; }
+    body nav a.navbar-brand svg {
+      margin-right: 10px; }
+
+#main-body {
+  padding: 40px 0; }
+
+.search-setup .search-term-list {
+  padding: 20px 0; }
+  .search-setup .search-term-list span.badge {
+    font-size: 1.2em;
+    margin: 0 10px 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: 0.2s all linear; }
+    .search-setup .search-term-list span.badge svg {
+      margin-left: 10px;
+      cursor: pointer;
+      transform: scale(1.7) translateX(5px);
+      color: rgba(238, 238, 238, 0.8); }
+    .search-setup .search-term-list span.badge.removed {
+      padding: 0;
+      width: 0;
+      margin: 0; }
